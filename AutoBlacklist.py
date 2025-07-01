@@ -101,7 +101,7 @@ class AutoBlacklist:
             return True
         # 处理连接失败
         except paramiko.AuthenticationException as auth_exception:
-            main_logger.error(f"认证失败: {str(auth_exception)[:200]}")
+            main_logger.error(f"SSH认证失败: {str(auth_exception)[:200]}")
             return False
         except paramiko.SSHException as ssh_exception:
             main_logger.error(f"SSH异常: {str(ssh_exception)[:200]}")
