@@ -27,6 +27,45 @@
 ## 📦 依赖库
 
 请先安装以下依赖：
-- paramiko>=3.4.0
-- cryptography>=42.0.5
+- paramiko>=3.5.0
+- cryptography>=44.0.1
 - PyNaCl>=1.5.0
+- bcrypt>=4.3.0
+                 
+---
+
+## 🚀 运行
+
+1. 安装依赖库：
+
+    执行命令：`pip install -r requirements.txt`
+2. 配置参数：
+
+    编辑AutoBlacklist.py文件，将参数配置为实际值。
+
+| 参数名 | 描述 |
+|--------|------|
+| `FIREWALL_IP` | 华为 USG 防火墙的 IP 地址 |
+| `SSH_PORT` | SSH 端口号，默认为 `22` |
+| `USERNAME` | 登录防火墙的用户名 |
+| `PASSWORD` | 登录防火墙的密码（可选，推荐使用密钥） |
+| `KEY_FILE_PATH` | SSH 私钥路径（如使用密钥登录） |
+| `IP_THRESHOLD` | 触发封禁的威胁源 IP 出现次数阈值 |
+| `FIREWALL_BLOCK_TIME` | 封禁时长（单位：分钟），默认 `300` |
+
+3. 运行脚本：
+
+    执行命令：`python AutoBlacklist.py`
+
+4. 查看日志：
+
+    - 所有操作记录将写入 firewall_check.log
+    - 被封禁的 IP 地址记录在 blocked_ips.log
+
+5. 设置定时任务（可选）
+
+    使用corntab或定时任务面板设置定时任务
+
+    例如每五分钟执行一次脚本
+
+    `*/5 * * * * /usr/bin/python ./AutoBlacklist.py`
