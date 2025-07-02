@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 # @FileName  :AutoBlacklist.py
-# @Time      :2025-07-02
-# @Author    :xgxdmx
+# @Time :2025-07-02
+# @Author :xgxdmx
 
 import logging
 import re
@@ -148,6 +148,8 @@ class AutoBlacklist:
     # 执行配置命令
     def execute_config_command(self, command):
         try:
+            # 临时禁用防火墙display输出分页
+            self.send_command("screen-length 0 temporary")
             self.send_command("system-view")
             output = self.send_command(command)
             self.send_command("return")
@@ -167,6 +169,8 @@ class AutoBlacklist:
         # 开始检查
         try:
             # 获取威胁日志
+            # 临时禁用防火墙display输出分页
+            self.send_command("screen-length 0 temporary")
             log_output = self.send_command("display logbuffer module IPS slot 11")
             if not log_output:
                 return result
