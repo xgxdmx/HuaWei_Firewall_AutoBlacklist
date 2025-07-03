@@ -7,27 +7,28 @@
 import logging
 import re
 import sys
+import os
 import time
 import paramiko
 import socket
 from collections import defaultdict
 from logging.handlers import TimedRotatingFileHandler
 
-# 配置防火墙SSH连接信息
+# 配置防火墙SSH连接信息(环境变量值，未获取到环境变量时的默认值)
 # 防火墙IP
-FIREWALL_IP = "xxx.xxx.xxx.xxx"
+FIREWALL_IP = os.environ.get('FIREWALL_IP', '127.0.0.1')
 # 防火墙端口
-FIREWALL_PORT = 22
+FIREWALL_SSH_PORT = int(os.environ.get('FIREWALL_SSH_PORT'), 22)
 # 防火墙用户名
-FIREWALL_USER = "username"
+FIREWALL_USER = os.environ.get('FIREWALL_USER', 'user')
 # 防火墙密码
-FIREWALL_PASSWORD = "password"
+FIREWALL_PASSWORD = os.environ.get('FIREWALL_PASSWORD', 'password')
 # 威胁IP检测阈值
-FIREWALL_THRESHOLD = 10
+FIREWALL_IP_THRESHOLD = int(os.environ.get('FIREWALL_IP_THRESHOLD'), 5)
 # 威胁IP封禁时间（分钟）
-FIREWALL_BLOCK_TIME = 300
+FIREWALL_IP_BLOCK_TIME = int(os.environ.get('FIREWALL_IP_BLOCK_TIME'), 300)
 # 历史日志留存数量
-HISTORY_LOG_COUNT = 10
+HISTORY_LOG_COUNT = int(os.environ.get('HISTORY_LOG_COUNT'), 10)
 
 # 配置日志系统
 def get_logger(logger_name, log_file):
@@ -159,7 +160,7 @@ class AutoBlacklist:
             return None
 
     # IP威胁检查
-    def single_threat_check(self, threshold=FIREWALL_THRESHOLD):
+    def single_threat_check(self, threshold=FIREWALL_IP_THRESHOLD):
         if not self.connect():
             return None
         result = {
@@ -195,7 +196,7 @@ class AutoBlacklist:
             self.disconnect()
     # 封禁指定IP
     def block_ip(self, ip):
-        block_cmd = f"firewall blacklist item source-ip {ip} timeout {FIREWALL_BLOCK_TIME}"
+        block_cmd = f"firewall blacklist item source-ip {ip} timeout {FIREWALL_IP_BLOCK_TIME}"
         main_logger.info(block_cmd)
         self.execute_config_command(block_cmd)
         return True
@@ -223,12 +224,12 @@ def main():
     # 配置防火墙连接参数
     client = AutoBlacklist(
         FIREWALL_IP,
-        FIREWALL_PORT,
+        FIREWALL_SSH_PORT,
         FIREWALL_USER,
         FIREWALL_PASSWORD
     )
     # 执行单次检查
-    result = client.single_threat_check(threshold=FIREWALL_THRESHOLD)
+    result = client.single_threat_check(threshold=FIREWALL_IP_THRESHOLD)
     # 处理结果
     try:
         if result:

@@ -41,19 +41,30 @@
     执行命令：`pip install -r requirements.txt`
 2. 配置参数：
 
-    编辑AutoBlacklist.py文件，将参数配置为实际值。
+    设置环境变量，将环境变量参数配置为实际值。
 
-| 参数名 | 描述 |
-|--------|------|
-| `FIREWALL_IP` | 华为 USG 防火墙的 IP 地址 |
-| `SSH_PORT` | SSH 端口号，默认为 `22` |
-| `USERNAME` | 登录防火墙的用户名 |
-| `PASSWORD` | 登录防火墙的密码（可选，推荐使用密钥） |
-| `KEY_FILE_PATH` | SSH 私钥路径（如使用密钥登录） |
-| `IP_THRESHOLD` | 触发封禁的威胁源 IP 出现次数阈值 |
-| `FIREWALL_BLOCK_TIME` | 封禁时长（单位：分钟），默认 `300` |
+| 环境变量参数名                  | 描述                               |
+|--------------------------|----------------------------------|
+| `FIREWALL_IP`            | 华为 USG 防火墙的 IP 地址，默认为`127.0.0.1` |
+| `FIREWALL_SSH_PORT`      | SSH 端口号，默认为 `22`                 |
+| `FIREWALL_USER`          | 登录防火墙的用户名，默认为`user`              |
+| `FIREWALL_PASSWORD`      | 登录防火墙的密码，默认为`password`           |
+| `FIREWALL_IP_THRESHOLD`  | 触发封禁的威胁源 IP 出现次数阈值，默认 `5`        |
+| `FIREWALL_IP_BLOCK_TIME` | 封禁时长（单位：分钟），默认 `300`             |
+| `HISTORY_LOG_COUNT`      | 历史日志留存数量，默认 `10`                 |
 
 3. 运行脚本：
+    
+    配置环境变量：
+    ```shell
+    export FIREWALL_IP="xxx.xxx.xxx.xxx"
+    export FIREWALL_SSH_PORT=22
+    export FIREWALL_USER="user"
+    export FIREWALL_PASSWORD="password"
+    export FIREWALL_IP_THRESHOLD=10
+    export FIREWALL_IP_BLOCK_TIME=300
+    export HISTORY_LOG_COUNT=10
+    ```
 
     执行命令：`python AutoBlacklist.py`
 
