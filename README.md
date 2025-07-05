@@ -6,12 +6,12 @@
 
 ## 🔍 功能特性
 
-✅ 支持 SSH 登录华为 USG 防火墙  
-✅ 提取 `logbuffer` 中IPS模块的威胁源IP地址  
-✅ 根据配置的阈值判断是否封禁  
-✅ 封禁命令：`firewall blacklist item source-ip <ip> timeout <FIREWALL_BLOCK_TIME>`，默认封禁300分钟  
-✅ 记录日志到 `firewall_check.log` 和 `blocked_ips.log`  
-✅ 支持 ECC 加密算法连接（如 `ecdsa-sha2-nistp256`）
+✅ 支持 SSH 登录华为 USG 防火墙
+✅ 提取 logbuffer 中IPS模块的威胁源IP地址
+✅ 根据配置的攻击次数阈值判断是否封禁
+✅ 基于SSH命令执行封禁操作，默认适配华为USG系列防火墙命令，默认封禁300分钟
+✅ 支持运行日志与封禁IP日志 firewall_check.log 与 blocked_ips.log
+✅ 支持配置参数读取系统环境变量或自定义方式
 
 ---
 
