@@ -6,12 +6,12 @@
 
 ## 🔍 功能特性
 
-✅ 支持 SSH 登录华为 USG 防火墙 &nbsp;&nbsp;
-✅ 提取 logbuffer 中 IPS 模块的威胁源 IP 地址 &nbsp;&nbsp;
-✅ 根据配置的攻击次数阈值判断是否封禁 &nbsp;&nbsp;
-✅ 基于 SSH 命令执行封禁操作，默认适配华为 USG 系列防火墙命令，默认封禁 300 分钟 &nbsp;&nbsp;
-✅ 支持运行日志与封禁 IP 日志 firewall_check.log 与 blocked_ips.log &nbsp;&nbsp;
-✅ 支持配置参数读取系统环境变量或自定义方式
+✅ 支持 SSH 登录华为 USG 防火墙  
+✅ 提取 logbuffer 中 IPS 模块的威胁源 IP 地址  
+✅ 根据配置的攻击次数阈值判断是否封禁  
+✅ 基于 SSH 命令执行封禁操作，默认适配华为 USG 系列防火墙命令，默认封禁 300 分钟  
+✅ 支持运行日志与封禁 IP 日志 firewall_check.log 与 blocked_ips.log  
+✅ 支持配置参数读取系统环境变量或自定义方式  
 
 ---
 
