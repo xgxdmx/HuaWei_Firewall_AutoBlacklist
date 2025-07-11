@@ -10,6 +10,7 @@
 ✅ 提取 `logbuffer` 中IPS模块的威胁源IP地址  
 ✅ 根据配置的阈值判断是否封禁  
 ✅ 封禁命令：`firewall blacklist item source-ip <ip> timeout <FIREWALL_BLOCK_TIME>`，默认封禁300分钟  
+✅ 支持 IP 白名单，白名单中的 IP 不会被封禁
 ✅ 记录日志到 `firewall_check.log` 和 `blocked_ips.log`  
 ✅ 支持 ECC 加密算法连接（如 `ecdsa-sha2-nistp256`）
 
@@ -51,6 +52,7 @@
 | `FIREWALL_PASSWORD`      | 登录防火墙的密码，默认为`password`           |
 | `FIREWALL_IP_THRESHOLD`  | 触发封禁的威胁源 IP 出现次数阈值，默认 `5`        |
 | `FIREWALL_IP_BLOCK_TIME` | 封禁时长（单位：分钟），默认 `300`             |
+| `FIREWALL_IP_WHITELIST`  | IP白名单（英文逗号分隔），默认空值               |
 | `HISTORY_LOG_COUNT`      | 历史日志留存数量，默认 `10`                 |
 
 3. 运行脚本：
@@ -63,6 +65,7 @@
     export FIREWALL_PASSWORD="password"
     export FIREWALL_IP_THRESHOLD=10
     export FIREWALL_IP_BLOCK_TIME=300
+    export FIREWALL_IP_WHITELIST=""
     export HISTORY_LOG_COUNT=10
     ```
 
