@@ -18,17 +18,17 @@ from logging.handlers import TimedRotatingFileHandler
 # 防火墙IP
 FIREWALL_IP = os.environ.get('FIREWALL_IP', '127.0.0.1')
 # 防火墙端口
-FIREWALL_SSH_PORT = int(os.environ.get('FIREWALL_SSH_PORT'), 22)
+FIREWALL_SSH_PORT = int(os.environ.get('FIREWALL_SSH_PORT', 22))
 # 防火墙用户名
 FIREWALL_USER = os.environ.get('FIREWALL_USER', 'user')
 # 防火墙密码
 FIREWALL_PASSWORD = os.environ.get('FIREWALL_PASSWORD', 'password')
 # 威胁IP检测阈值
-FIREWALL_IP_THRESHOLD = int(os.environ.get('FIREWALL_IP_THRESHOLD'), 5)
+FIREWALL_IP_THRESHOLD = int(os.environ.get('FIREWALL_IP_THRESHOLD', 5))
 # 威胁IP封禁时间（分钟）
-FIREWALL_IP_BLOCK_TIME = int(os.environ.get('FIREWALL_IP_BLOCK_TIME'), 300)
+FIREWALL_IP_BLOCK_TIME = int(os.environ.get('FIREWALL_IP_BLOCK_TIME', 300))
 # 历史日志留存数量
-HISTORY_LOG_COUNT = int(os.environ.get('HISTORY_LOG_COUNT'), 10)
+HISTORY_LOG_COUNT = int(os.environ.get('HISTORY_LOG_COUNT', 10))
 
 # 配置日志系统
 def get_logger(logger_name, log_file):
