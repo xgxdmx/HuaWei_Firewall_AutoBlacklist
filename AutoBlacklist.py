@@ -27,6 +27,8 @@ FIREWALL_PASSWORD = os.environ.get('FIREWALL_PASSWORD', 'password')
 FIREWALL_IP_THRESHOLD = int(os.environ.get('FIREWALL_IP_THRESHOLD', 5))
 # 威胁IP封禁时间（分钟）
 FIREWALL_IP_BLOCK_TIME = int(os.environ.get('FIREWALL_IP_BLOCK_TIME', 300))
+# 白名单IP列表（英文逗号分隔）
+FIREWALL_IP_WHITELIST = re.split(r'\s*,\s*', os.environ.get('FIREWALL_IP_WHITELIST', '').strip())
 # 历史日志留存数量
 HISTORY_LOG_COUNT = int(os.environ.get('HISTORY_LOG_COUNT', 10))
 
@@ -183,7 +185,7 @@ class AutoBlacklist:
                 result['detected_ips'][ip] += 1
             # 封禁超过阈值的IP
             for ip, count in result['detected_ips'].items():
-                if count > threshold:
+                if count > threshold and ip not in FIREWALL_IP_WHITELIST:
                     if self.block_ip(ip):
                         result['blocked_ips'].append(ip)
                         self.log_blocked_ip(ip, count)
@@ -242,6 +244,9 @@ def main():
                 main_logger.info("\n" + "无威胁IP达到阈值")
             else:
                 main_logger.info("\n".join(f"  {ip}" for ip in result['blocked_ips']))
+            main_logger.info("\n白名单IP地址：")
+            for white_ip in FIREWALL_IP_WHITELIST:
+                main_logger.info(f"{white_ip}\n")
         else:
             main_logger.error("\n威胁检查失败")
             sys.exit(1)
