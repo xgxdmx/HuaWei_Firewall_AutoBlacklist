@@ -216,7 +216,6 @@ class AutoBlacklist:
             for ip in ips_alert:
                 result_alert['detected_alert'][ip] += 1
             return dict(result_alert)
-
         except Exception as exception:
             main_logger.error(f"威胁检查失败: {str(exception)}")
             return None
