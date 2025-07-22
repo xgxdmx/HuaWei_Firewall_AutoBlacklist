@@ -134,7 +134,6 @@ class AutoBlacklist:
             self.shell.send(command + "\n")
             output = b""
             start_time = time.time()
-
             while time.time() - start_time < 10:  # 10秒超时
                 if self.shell.recv_ready():
                     output += self.shell.recv(4096)
@@ -161,11 +160,11 @@ class AutoBlacklist:
             main_logger.error(f"配置命令执行失败: {str(exception)}")
             return None
 
-    # IP威胁检查
-    def single_threat_check(self, threshold=FIREWALL_IP_THRESHOLD):
+    # BLOCK_IP威胁检查
+    def single_threat_check_block_ip(self, threshold=FIREWALL_IP_THRESHOLD):
         if not self.connect():
             return None
-        result = {
+        result_block = {
             'detected_ips': defaultdict(int),
             'blocked_ips': []
         }
@@ -176,21 +175,48 @@ class AutoBlacklist:
             self.send_command("screen-length 0 temporary")
             log_output = self.send_command("display logbuffer module IPS slot 11")
             if not log_output:
-                return result
+                return result_block
             # 提取源IP（严格匹配日志格式）
-            ip_pattern = re.compile(r"SrcIp=(\d+\.\d+\.\d+\.\d+)")
-            ips = ip_pattern.findall(log_output)
+            Src_Block_IP = re.compile(r"SrcIp=(\d+\.\d+\.\d+\.\d+).*?Action=Block")
+            ips_block = Src_Block_IP.findall(log_output)
             # 统计IP出现次数
-            for ip in ips:
-                result['detected_ips'][ip] += 1
+            for ip in ips_block:
+                result_block['detected_ips'][ip] += 1
             # 封禁超过阈值的IP
-            for ip, count in result['detected_ips'].items():
+            for ip, count in result_block['detected_ips'].items():
                 if count > threshold and ip not in FIREWALL_IP_WHITELIST:
                     if self.block_ip(ip):
-                        result['blocked_ips'].append(ip)
+                        result_block['blocked_ips'].append(ip)
                         self.log_blocked_ip(ip, count)
             # 返回结果
-            return dict(result)
+            return dict(result_block)
+        except Exception as exception:
+            main_logger.error(f"威胁检查失败: {str(exception)}")
+            return None
+        finally:
+            self.disconnect()
+    # ALERT_IP威胁检查
+    def single_threat_check_alert_ip(self):
+        if not self.connect():
+            return None
+        result_alert = {
+            'detected_alert': defaultdict(int),
+            'alert_ips': []
+        }
+        try:
+            # 获取威胁日志
+            # 临时禁用display分页
+            self.send_command("screen-length 0 temporary")
+            log_output = self.send_command("display logbuffer module IPS slot 11")
+            if not log_output:
+                return result_alert
+            # 提取源IP（严格匹配日志格式）
+            Src_Alert_IP = re.compile(r"SrcIp=(\d+\.\d+\.\d+\.\d+).*?Action=Alert")
+            ips_alert = Src_Alert_IP.findall(log_output)
+            for ip in ips_alert:
+                result_alert['detected_alert'][ip] += 1
+            return dict(result_alert)
+
         except Exception as exception:
             main_logger.error(f"威胁检查失败: {str(exception)}")
             return None
@@ -231,23 +257,30 @@ def main():
         FIREWALL_PASSWORD
     )
     # 执行单次检查
-    result = client.single_threat_check(threshold=FIREWALL_IP_THRESHOLD)
+    main_logger.info("\n正在连接防火墙读取阻断源IP")
+    result = client.single_threat_check_block_ip(threshold=FIREWALL_IP_THRESHOLD)
+    main_logger.info("\n正在连接防火墙读取告警源IP")
+    result_alert = client.single_threat_check_alert_ip()
     # 处理结果
     try:
         if result:
             main_logger.info("\n=== 威胁检测报告 ===")
-            main_logger.info("\n检测到的IP及出现次数：")
+            main_logger.info("\n检测到防火墙阻断的IP及出现次数：")
             for ip, count in result['detected_ips'].items():
                 main_logger.info(f"\n  {ip}  {count}次")
             main_logger.info("\n已封禁的IP：")
             if len(result['blocked_ips']) == 0:
-                main_logger.info("\n" + "无威胁IP达到阈值")
+                main_logger.info("\n" + " 无威胁IP达到阈值")
             else:
                 main_logger.info("\n".join(f"  {ip}" for ip in result['blocked_ips']))
             main_logger.info("\n白名单IP地址：")
             for white_ip in FIREWALL_IP_WHITELIST:
-                main_logger.info(f"{white_ip}\n")
-        else:
+                main_logger.info(f"\n {white_ip}")
+        if result_alert:
+            main_logger.info("\n检测到防火墙告警的IP及出现次数：")
+            for ip, count in result_alert['detected_alert'].items():
+                main_logger.info(f"\n  {ip}  {count}次")
+        if not result and not result_alert:
             main_logger.error("\n威胁检查失败")
             sys.exit(1)
     except Exception as exception:
