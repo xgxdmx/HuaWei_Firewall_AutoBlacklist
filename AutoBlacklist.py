@@ -279,6 +279,8 @@ def main():
             main_logger.info("\n检测到防火墙告警的IP及出现次数：")
             for ip, count in result_alert['detected_alert'].items():
                 main_logger.info(f"\n  {ip}  {count}次")
+            if len(result_alert['alert_ips']) == 0:
+                main_logger.info("\n" + " 无告警的IP")
         if not result and not result_alert:
             main_logger.error("\n威胁检查失败")
             sys.exit(1)
